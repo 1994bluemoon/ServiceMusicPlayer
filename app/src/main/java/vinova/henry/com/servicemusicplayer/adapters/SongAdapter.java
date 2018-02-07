@@ -1,8 +1,7 @@
 package vinova.henry.com.servicemusicplayer.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,26 +15,20 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import vinova.henry.com.servicemusicplayer.R;
-import vinova.henry.com.servicemusicplayer.feature.home.HomeActivity;
-import vinova.henry.com.servicemusicplayer.feature.home.IHomeContract;
-import vinova.henry.com.servicemusicplayer.model.Songs;
-import vinova.henry.com.servicemusicplayer.service.PlayerService;
-
-/**
- * Created by dminh on 2/5/2018.
- */
+import vinova.henry.com.servicemusicplayer.model.Song;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
-    Context mContext;
-    List<Songs> songs;
+    private Context mContext;
+    private List<Song> songs;
+    private IClickEvent iClickEvent;
 
-
-    public SongAdapter(Context mContext) {
+    public SongAdapter(Context mContext, IClickEvent event) {
         this.mContext = mContext;
+        this.iClickEvent = event;
         songs = new ArrayList<>();
     }
 
-    public void setSongs(List<Songs> songs) {
+    public void setSongs(List<Song> songs) {
         this.songs = songs;
     }
 
@@ -47,19 +40,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
         holder.tvTitle.setText(songs.get(position).getTitle());
         holder.tvSinger.setText(songs.get(position).getSinger());
         holder.cvSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent serviceIntent = new Intent(mContext, PlayerService.class);
-// Pass data to be processed on the Service
-                Bundle data = new Bundle();
-                data.putSerializable("Song", songs.get(position));
-                serviceIntent.putExtras(data);
-// Starting the Service
-                mContext.startService(serviceIntent);
+                iClickEvent.onItemClicked(songs, position);
             }
         });
     }
@@ -69,14 +56,14 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         return songs == null ? 0 : songs.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.tv_title)
         TextView tvTitle;
         @BindView(R.id.tv_singer)
         TextView tvSinger;
         @BindView(R.id.cv_song)
         CardView cvSong;
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

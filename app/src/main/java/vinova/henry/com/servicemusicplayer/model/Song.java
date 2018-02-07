@@ -2,16 +2,12 @@ package vinova.henry.com.servicemusicplayer.model;
 
 import java.io.Serializable;
 
-/**
- * Created by dminh on 2/5/2018.
- */
+public class Song implements Serializable {
+    private long SongId;
+    private String Title;
+    private String Singer;
 
-public class Songs implements Serializable {
-    long SongId;
-    String Title;
-    String Singer;
-
-    public Songs(long songId, String title, String singer) {
+    public Song(long songId, String title, String singer) {
         SongId = songId;
         Title = title;
         Singer = singer;
