@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -15,13 +14,13 @@ import java.util.List;
 
 import vinova.henry.com.servicemusicplayer.model.Song;
 
-public class HomePresenter implements IHomeContract.IPresenter{
+public class HomePresenterImp implements IHomeContract.IPresenter{
 
     private IHomeContract.IView iView;
     private Context mContext;
     private List<Song> songs;
 
-    HomePresenter(Context mContext, IHomeContract.IView view) {
+    HomePresenterImp(Context mContext, IHomeContract.IView view) {
         this.mContext = mContext;
         this.iView = view;
         songs = new ArrayList<>();
@@ -51,12 +50,12 @@ public class HomePresenter implements IHomeContract.IPresenter{
     }
 
     static class doAsync extends AsyncTask<Void, Void, List<Song>>{
-        HomePresenter presenter;
+        HomePresenterImp presenter;
         Context context;
         private IHomeContract.IView iView;
 
 
-        public doAsync(HomePresenter presenter) {
+        public doAsync(HomePresenterImp presenter) {
             this.presenter = presenter;
             this.context = presenter.getmContext();
             this.iView = presenter.getiView();

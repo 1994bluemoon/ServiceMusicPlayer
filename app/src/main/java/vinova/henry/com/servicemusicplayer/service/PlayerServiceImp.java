@@ -16,7 +16,7 @@ import java.util.List;
 
 import vinova.henry.com.servicemusicplayer.model.Song;
 
-public class PlayerService extends Service implements IPlayerControler{
+public class PlayerServiceImp extends Service implements IPlayerControler{
 
     private final IBinder mBinder = new LocalBinder();
     private MediaPlayer mMediaPlayer;
@@ -93,9 +93,9 @@ public class PlayerService extends Service implements IPlayerControler{
     }
 
     public class LocalBinder extends Binder {
-        public PlayerService getService() {
+        public PlayerServiceImp getService() {
             // Return this instance of LocalService so clients can call public methods
-            return PlayerService.this;
+            return PlayerServiceImp.this;
         }
     }
 

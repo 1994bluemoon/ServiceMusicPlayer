@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageButton
+        android:src="@drawable/ic_play"
+        android:id="@+id/bt_play"
+        app:layout_constraintLeft_toRightOf="@id/bt_previous"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageButton
+        android:src="@drawable/ic_chevron_left"
+        android:id="@+id/bt_previous"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageButton
+        android:src="@drawable/ic_chevron_right"
+        android:id="@+id/bt_next"
+        app:layout_constraintLeft_toRightOf="@id/bt_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageButton
+        android:src="@drawable/ic_close"
+        android:id="@+id/bt_destroy"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</android.support.constraint.ConstraintLayout>

@@ -5,35 +5,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="vinova.henry.com.servicemusicplayer.feature.home.HomeActivity">
-    <LinearLayout
-        android:id="@+id/head"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/bt_next"
-            android:text="Next Song"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-        <Button
-            android:text="Previous Song"
-            android:id="@+id/bt_previous"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <Button
-            android:text="stop"
-            android:id="@+id/bt_stop"
-            app:layout_constraintTop_toBottomOf="parent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-    <android.support.v7.widget.RecyclerView
-        app:layout_constraintTop_toBottomOf="@id/head"
-        android:id="@+id/rcv_home"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        <!--<LinearLayout
+            android:id="@+id/head"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/bt_next"
+                android:text="Next Song"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+            <Button
+                android:text="Previous Song"
+                android:id="@+id/bt_previous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Button
+                android:text="stop"
+                android:id="@+id/bt_stop"
+                app:layout_constraintTop_toBottomOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>-->
 
-    </android.support.v7.widget.RecyclerView>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rcv_home"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/fm_minicontrol"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></android.support.v7.widget.RecyclerView>
+
+    <FrameLayout
+        android:id="@+id/fm_minicontrol"
+        android:layout_width="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="wrap_content">
+    </FrameLayout>
 
 </android.support.constraint.ConstraintLayout>

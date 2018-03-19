@@ -17,38 +17,35 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 
 import java.io.Serializable;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import vinova.henry.com.servicemusicplayer.R;
 import vinova.henry.com.servicemusicplayer.adapters.IClickEvent;
 import vinova.henry.com.servicemusicplayer.adapters.SongAdapter;
 import vinova.henry.com.servicemusicplayer.model.Song;
-import vinova.henry.com.servicemusicplayer.service.PlayerService;
+import vinova.henry.com.servicemusicplayer.service.PlayerServiceImp;
 
 public class HomeActivity extends AppCompatActivity implements IHomeContract.IView, IClickEvent {
 
     public static final int RUNTIME_PERMISSION_CODE = 7;
     SongAdapter adapter;
-    HomePresenter homePresenter;
-    PlayerService mService;
+    HomePresenterImp homePresenter;
+    PlayerServiceImp mService;
     List<Song> songList;
     boolean mBound = false;
 
     @BindView(R.id.rcv_home)
     RecyclerView rcvHome;
-    @BindView(R.id.bt_next)
-    Button btNext;
-    @BindView(R.id.bt_previous)
-    Button btPrevious;
-    @BindView(R.id.bt_stop)
-    Button btStop;
+    @BindView(R.id.fm_minicontrol)
+    FrameLayout fmMinicontrol;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,22 +53,58 @@ public class HomeActivity extends AppCompatActivity implements IHomeContract.IVi
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
 
+        fmMinicontrol.addView(LayoutInflater.from(this).inflate(R.layout.mini_control_layout, null));
+        final ViewHolder holder = new ViewHolder(fmMinicontrol);
+
         AndroidRuntimePermission();
 
         adapter = new SongAdapter(this, this);
         rcvHome.setLayoutManager(new LinearLayoutManager(this));
         rcvHome.setAdapter(adapter);
 
-        homePresenter = new HomePresenter(this, this);
+        homePresenter = new HomePresenterImp(this, this);
         homePresenter.getAllMusic();
         songList = homePresenter.getSongs();
+
+        holder.btDestroy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mBound){
+                    unbindService(mConnection);
+                    mService.stopSelf();
+                    mBound = false;
+                }
+
+            }
+        });
+
+        holder.btNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mBound) mService.next();
+            }
+        });
+
+        holder.btPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mBound) mService.resume();
+            }
+        });
+
+        holder.btPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mBound) mService.previous();
+            }
+        });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-            // Bind to LocalService
-        Intent intent = new Intent(this, PlayerService.class);
+        // Bind to LocalService
+        Intent intent = new Intent(this, PlayerServiceImp.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -96,7 +129,7 @@ public class HomeActivity extends AppCompatActivity implements IHomeContract.IVi
 
     @Override
     public void onItemClicked(List<Song> songs, int position) {
-        Intent serviceIntent = new Intent(this, PlayerService.class);
+        Intent serviceIntent = new Intent(this, PlayerServiceImp.class);
         // Pass data to be processed on the Service
         Bundle data = new Bundle();
         data.putInt("position", position);
@@ -105,10 +138,11 @@ public class HomeActivity extends AppCompatActivity implements IHomeContract.IVi
         // Starting the Service
         this.startService(serviceIntent);
         if (!mBound) {
-            Intent intent = new Intent(this, PlayerService.class);
+            Intent intent = new Intent(this, PlayerServiceImp.class);
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
             mBound = true;
         }
+        fmMinicontrol.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -120,8 +154,7 @@ public class HomeActivity extends AppCompatActivity implements IHomeContract.IVi
 
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.d("permission", "granted");
-                }
-                else {
+                } else {
                     Log.d("permission", "Need confirm permission");
                 }
             }
@@ -133,7 +166,7 @@ public class HomeActivity extends AppCompatActivity implements IHomeContract.IVi
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-            PlayerService.LocalBinder binder = (PlayerService.LocalBinder) service;
+            PlayerServiceImp.LocalBinder binder = (PlayerServiceImp.LocalBinder) service;
             mService = binder.getService();
             mBound = true;
         }
@@ -144,9 +177,9 @@ public class HomeActivity extends AppCompatActivity implements IHomeContract.IVi
         }
     };
 
-    @OnClick({R.id.bt_next, R.id.bt_previous, R.id.bt_stop})
+    /*@OnClick({R.id.bt_next, R.id.bt_previous})
     public void onViewClicked(View view) {
-        if (mBound){
+        if (mBound) {
             switch (view.getId()) {
                 case R.id.bt_next:
                     mService.next();
@@ -154,15 +187,15 @@ public class HomeActivity extends AppCompatActivity implements IHomeContract.IVi
                 case R.id.bt_previous:
                     mService.previous();
                     break;
-                case R.id.bt_stop:
+                *//*case R.id.bt_stop:
                     unbindService(mConnection);
                     mService.stopSelf();
                     mBound = false;
-                    break;
+                    break;*//*
             }
         }
     }
-
+*/
     // Creating Runtime permission function.
     public void AndroidRuntimePermission() {
 
@@ -197,8 +230,7 @@ public class HomeActivity extends AppCompatActivity implements IHomeContract.IVi
                                     .setIcon(android.R.drawable.ic_dialog_alert)
                                     .setTitle("Permission")
                                     .setMessage("Please allow read internal storage")
-                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-                                    {
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             AndroidRuntimePermission();
@@ -221,6 +253,21 @@ public class HomeActivity extends AppCompatActivity implements IHomeContract.IVi
                     );
                 }
             }
+        }
+    }
+
+    static class ViewHolder {
+        @BindView(R.id.bt_play)
+        ImageButton btPlay;
+        @BindView(R.id.bt_previous)
+        ImageButton btPrevious;
+        @BindView(R.id.bt_next)
+        ImageButton btNext;
+        @BindView(R.id.bt_destroy)
+        ImageButton btDestroy;
+
+        ViewHolder(View view) {
+            ButterKnife.bind(this, view);
         }
     }
 }
